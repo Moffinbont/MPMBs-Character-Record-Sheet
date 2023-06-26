@@ -104,6 +104,7 @@ CompanionList["summon"] = {
 joinString : ", "
 },]
 
+}
 
 /*	notes // OPTIONAL //
 	TYPE:	array (variable length) with objects
@@ -150,5 +151,3 @@ joinString : ", "
 
 	The array is processed in the order it is in the code, no sorting will take place.
 */
-
-}
