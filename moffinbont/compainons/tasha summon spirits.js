@@ -80,7 +80,6 @@ joinString : ", "
 CreatureList["bestial spirit land"] = {
 
 	name : "Bestial Spirit - Land",
-	nameAlt : ["Land Beast"],
 	source : ["TCoE", 109],
 	size : 4,
 	type : "Beast",
@@ -96,7 +95,7 @@ CreatureList["bestial spirit land"] = {
 
 	proficiencyBonus : 0,
 	proficiencyBonusLinked : true,
-	challengeRating : "-",
+	challengeRating : "\"-\"",
 	scores : [18, 11, 16, 4, 14, 5],
 
 	senses : "Darkvision 60 ft",
@@ -132,7 +131,6 @@ CreatureList["bestial spirit land"] = {
 CreatureList["bestial spirit water"] = {
 
 	name : "Bestial Spirit - Water",
-	nameAlt : ["Water Beast"],
 	source : ["TCoE", 109],
 	size : 4,
 	type : "Beast",
@@ -148,7 +146,7 @@ CreatureList["bestial spirit water"] = {
 
 	proficiencyBonus : 0,
 	proficiencyBonusLinked : true,
-	challengeRating : "-",
+	challengeRating : "\"-\"",
 	scores : [18, 11, 16, 4, 14, 5],
 
 	senses : "Darkvision 60 ft",
@@ -186,7 +184,6 @@ CreatureList["bestial spirit water"] = {
 CreatureList["bestial spirit air"] = {
 
 	name : "Bestial Spirit - Air",
-	nameAlt : ["Air Beast"],
 	source : ["TCoE", 109],
 	size : 4,
 	type : "Beast",
@@ -202,7 +199,7 @@ CreatureList["bestial spirit air"] = {
 
 	proficiencyBonus : 0,
 	proficiencyBonusLinked : true,
-	challengeRating : "-",
+	challengeRating : "\"-\"",
 	scores : [18, 11, 16, 4, 14, 5],
 
 	senses : "Darkvision 60 ft",
