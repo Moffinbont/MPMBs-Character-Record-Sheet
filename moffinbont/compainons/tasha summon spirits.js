@@ -55,43 +55,29 @@ RequiredSheetVersion("13.0.6");
 CreatureList["bestial spirit land"] = {
 
 	name : "Bestial Spirit - Land",
-
 	nameAlt : ["Land Beast"],
-
 	source : ["TCoE", 109],
-	
 	size : 4,
-
 	type : "Beast",
-	
 	header : "Summon",
-
 	companion : ["summon"],
-
 	companionApply : "summon",
-
 	alignment : "Unaligned",
 
 	ac : 11,
-
-	hp : 10,
-
+	hp : 30,
 	hd : [2, 6],
-
 	speed : "30 ft, climb 30 ft",
 
 	proficiencyBonus : 0,
-
 	proficiencyBonusLinked : true,
-
 	challengeRating : "-",
-
 	scores : [18, 11, 16, 4, 14, 5],
 
 	senses : "Darkvision 60 ft",
+	languages : "understands the languages you speak",
 
 	attacksAction : 1,
-
 	attacks : [{
 		name : "Maul",
 		ability : 1,
@@ -101,11 +87,6 @@ CreatureList["bestial spirit land"] = {
 		range : "Melee (5 ft)",
 		description : "Multiattack: Maul number of times equal to half the spell's level"
 	}],
-
-	languages : "understands the languages you speak",
-
-
-
 
 	features : [{
 		name : "Summon Beast",
@@ -121,8 +102,61 @@ CreatureList["bestial spirit land"] = {
 		name : "Pack Tactics",
 		description : "The beast has advantage on an attack roll against a creature if at least one of the hyena's allies is within 5 ft of the creature and the ally isn't incapacitated."
 	}],
-
-
-
 }
 
+CreatureList["bestial spirit water"] = {
+
+	name : "Bestial Spirit - Water",
+	nameAlt : ["Water Beast"],
+	source : ["TCoE", 109],
+	size : 4,
+	type : "Beast",
+	header : "Summon",
+	companion : ["summon"],
+	companionApply : "summon",
+	alignment : "Unaligned",
+
+	ac : 11,
+	hp : 30,
+	hd : [2, 6],
+	speed : "30 ft, swim 30 ft",
+
+	proficiencyBonus : 0,
+	proficiencyBonusLinked : true,
+	challengeRating : "-",
+	scores : [18, 11, 16, 4, 14, 5],
+
+	senses : "Darkvision 60 ft",
+	languages : "understands the languages you speak",
+
+	attacksAction : 1,
+	attacks : [{
+		name : "Maul",
+		ability : 1,
+		useSpellcastingAbility : true,
+		abilitytodamage : true,
+		damage : [1, 8, "piercing"],
+		range : "Melee (5 ft)",
+		description : "Multiattack: Maul number of times equal to half the spell's level"
+	}],
+
+	
+
+	features : [{
+		name : "Summon Beast",
+		description : "You call forth a bestial spirit. It manifests in an unoccupied space that you can see within range. This corporeal form uses the Bestial Spirit stat block. When you cast the spell, choose an environment: Air, Land, or Water. The creature resembles an animal of your choice that is native to the chosen environment, which determines certain traits in its stat block.",
+		joinString : "\n   "
+	}],
+	actions : [{
+		name : "Multiattack",
+		description : "The beast makes a number of attacks equal to half this spell's level (rounded down)",
+		
+	}],
+	traits : [{
+		name : "Pack Tactics",
+		description : "The beast has advantage on an attack roll against a creature if at least one of the hyena's allies is within 5 ft of the creature and the ally isn't incapacitated."
+	},{
+		name : "Water Breathing",
+		description : "The sea horse can breathe only underwater."
+	}],
+}
