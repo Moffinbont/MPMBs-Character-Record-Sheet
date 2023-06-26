@@ -457,8 +457,8 @@ WeaponsList["sword of purple"] = {
 
 	If the attack you are adding used the spell attack (or DC) of a fixed spellcasting entity
 	(class, race, feat, or magic item), then you can use this attribute.
-	This will most likely be used as part of a `weaponOptions` or `creatureOptions` attribute,
-	when a feature adds an attack option, or creature option with attacks linked to the original feature.
+	This will most lir `creatureOptions` attribute,
+	when a feature adds an attack option, or creature option wkely be used as part of a `weaponOptions` oith attacks linked to the original feature.
 	For example, if a magic item grants an attack that uses the `fixedDC` of that magic item,
 	or a class feature grants a companion option that uses the spell attack of the class.
 

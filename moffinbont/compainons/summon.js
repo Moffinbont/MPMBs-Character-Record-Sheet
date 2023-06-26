@@ -44,7 +44,7 @@
 
 */
 
-var iFileName = "Homebrew Syntax - CompanionList.js";
+var iFileName = "summon";
 /* 	iFileName // OPTIONAL //
 	TYPE:	string
 	USE:	how the file will be named in the sheet if you import it as a file
@@ -77,116 +77,16 @@ RequiredSheetVersion("13.1.0");
 	or go to File >> Properties >> Description, where the version is part of the document title.
 */
 
-CompanionList["purple familiar"] = {
-/* 	CreatureList object name // REQUIRED //
-	TYPE:	string
-	USE:	object name of the companion as it will be used by the sheet
+CompanionList["summon"] = {
 
-	By adding a new object to the existing CompanionList object, we create a new companion option.
-	The object name here is 'purple familiar'. You can use any object name as long as it is not already used.
-	If you do use an object name that is already in use, you will be overwriting that object.
+	name : "Summon",
 
-	Note the use of only lower case! Also note the absence of the word "var" and the use of brackets [].
-*/
-	name : "Summon Beast",
-/*	name // REQUIRED //
-	TYPE:	string
-	USE:	name of the companion option as it will be displayed on the sheet
+	nameMenu : "Summon",
 
-	This name will be used to populate the Notes field on the companion page, as the header of its attributes.
-	This name will not be used in the Companion Options menu, the `nameMenu` will be used instead.
-*/
-	nameMenu : "Familiar (Purple Familiar class feature)",
-/*	nameMenu // REQUIRED //
-	TYPE:	string
-	USE:	name of the companion option as it will appear in the Companion Options menu
+	nameOrigin : "from the spell Summon Beast",
 
-	This name will also be used on several other places, like the changes dialog pop-up or in error messages.
-*/
-	nameTooltip : "the Purple Familiar class feature",
-/*	nameTooltip // OPTIONAL //
-	TYPE:	string
-	USE:	name of the companion options as it will appear in tooltips for actions on the 1st page
+	source : ["TCoE", 109],
 
-	This attribute is only used if the `action` attribute is present as well.
-	If `nameTooltip` is not defined, the `name` attribute will be used instead.
-*/
-	nameOrigin : "variant of the Find Familiar 1st-level conjuration [ritual] spell",
-/*	nameOrigin // OPTIONAL //
-	TYPE:	string
-	USE:	additional information displayed in the 
-
-	This attribute is added in brackets after the `name` attribute and together with the `source`
-	to form the heading in the Notes section of the companion page.
-
-	For example, using these attributes:
-		name : "Purple Familiar",
-		nameOrigin : "variant of the Find Familiar 1st-level conjuration [ritual] spell",
-		source : [["HB", 105], ["Purple", 12]]
-	The resulting heading would be:
-		"Purple Familiar (variant of the Find Familiar 1st-level conjuration [ritual] spell, HB 105)"
-	Note that only the first source option is used that is not set to excluded in the Source Material dialog.
-*/
-	source : ["SRD", 204],
-	source : [["E", 7], ["S", 115]],
-/*	source // REQUIRED //
-	TYPE:	array with two entries (or array of these arrays)
-	USE:	define where the companion option is found
-
-	This attribute is used by the sheet to determine if the companion option should be available
-	depending on the sources included and excluded.
-
-	This array has two entries, a string followed by a number
-	1. string
-		The first entry has to be the object name of a SourceList object.
-	2. number
-		The second entry is the page number to find the creature at.
-		This can be any number and is ignored if it is a 0.
-
-	See the "source (SourceList).js" file for learning how to add a custom source.
-
-	Alternatively, this can be an array of arrays to indicate it appears in multiple sources.
-	The example above says something appears on both page 7 of the Elemental Evil Player's Companion and
-	on page 115 of the Sword Coast Adventure Guide.
-
-	If a creature is completely homebrew, or you don't want to make a custom source, just put the following:
-		source : ["HB", 0],
-	"HB" refers to the 'homebrew' source.
-*/
-	defaultExcluded : true,
-/*	defaultExcluded // OPTIONAL //
-	TYPE:	boolean
-	USE:	whether this companion option should be excluded by default (true) or included by default (false)
-
-	Include this attribute and set it to true if the companion option should appear in the Excluded list
-	of the Source Selection Dialog when the script is added for the first time.
-	It will have to be manually set to be included before it is used by the sheet's automation.
-	The user will be made aware of this exclusion.
-
-	This is useful for optional companion options that you wouldn't normally want to use (e.g. playtest or campaign-specific).
-
-	Setting this attribute to false is the same as not including this attribute.
-*/
-action : [
-	["reaction", " (start)"],
-	["bonus action", "Shove"]
-],
-/*	action // OPTIONAL //
-	TYPE:	array (variable length)
-	USE:	add entry to the "Actions", "Bonus Actions", or "Reactions" section on the 1st page
-
-	The entries in this array must always be arrays with 2 strings each:
-	1. The first string in each sub-array is the type of action, written in lowercase.
-		The options are "action", "bonus action", or "reaction".
-	2. The second string can be one of two things:
-		2.1	When the first character of the string is non-alphabetic (e.g. a space or a hyphen), it is amended to the name of the companion option.
-			This amended total is then added as an action.
-		2.2 When the first character of the string is an alphabetic character (e.g. everything from a-Z), it is not amended to the name of the feature.
-			The string is taken as-is and added as an action.
-	
-	For the tooltip of the origin of these action(s), the `nameTooltip` will be used if
-	defined, see above. If `nameTooltip` isn't defined, the `name` will be used instead.
-*/
 	includeCheck : function(sCrea, objCrea, iCreaCR) {
 		return objCrea.type.toLowerCase() === "beast" && objCrea.size >= 3 && iCreaCR <= 1/4 ? true : false;
 	},
