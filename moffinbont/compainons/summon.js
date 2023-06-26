@@ -83,12 +83,13 @@ CompanionList["summon"] = {
 
 	nameMenu : "Summon",
 
-	nameOrigin : "from the spell Summon Beast",
+	nameOrigin : "from the spell Summon",
 
 	source : ["TCoE", 109],
 
 	includeCheck : function(sCrea, objCrea, iCreaCR) {
-		return objCrea.type.toLowerCase() === "beast" && objCrea.size >= 3 && iCreaCR <= 1/4 ? true : false;
+		return includedNames.contains(objCrea.name);
+		//false; //objCrea.type.toLowerCase() === "beast" && objCrea.size >= 3 && iCreaCR <= 1/4 ? true : false;
 	},
 /*	includeCheck // OPTIONAL //
 	TYPE:	function
