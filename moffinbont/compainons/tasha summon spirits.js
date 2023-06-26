@@ -51,6 +51,31 @@ var iFileName = "Tasha Summon Spirits";
 
 RequiredSheetVersion("13.0.6");
 
+CompanionList["summon"] = {
+
+	name : "Summon",
+
+	nameMenu : "Summon",
+
+	nameOrigin : "(TCoE Summon Spell)",
+
+	source : ["TCoE", 109],
+
+	notes : [{
+		name : "The creature disappears when it drops to 0 hit points or when the spell ends.",
+		description : "",
+	joinString : ""
+}, {
+	name : "The creature is an ally to you and your companions.",
+	description : "",
+	joinString : ""
+}, {
+	name : "In combat",
+	description : "the creature shares your initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don’t issue any, it takes the Dodge action and uses its move to avoid danger.",
+joinString : ", "
+},]
+
+}
 
 CreatureList["bestial spirit land"] = {
 
