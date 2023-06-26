@@ -62,18 +62,30 @@ CompanionList["summon"] = {
 	source : ["TCoE", 109],
 
 	notes : [{
-		name : "The creature disappears when it drops to 0 hit points or when the spell ends.",
+		name : "The creature is an ally to you and your companions.",
 		description : "",
-	joinString : ""
-}, {
-	name : "The creature is an ally to you and your companions.",
-	description : "",
-	joinString : ""
-}, {
-	name : "In combat",
-	description : "the creature shares your initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don’t issue any, it takes the Dodge action and uses its move to avoid danger.",
-joinString : ", "
-},]
+		joinString : ""
+	}, {
+		name : "In combat",
+		description : "the creature shares your initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don’t issue any, it takes the Dodge action and uses its move to avoid danger.",
+	joinString : ", "
+	}],
+
+	attributesAdd : {
+		features : [{
+			name : "Summon Spell",
+			description : "The creature disappears when it drops to 0 hit points or when the spell ends."
+		}]
+	},
+
+	attributesChange : function(sCrea, objCrea) {
+		//console.println("Companion.Layers.Remember: " + What("Companion.Layers.Remember"));
+		//console.println("Companion.Remember: " + What("Companion.Remember"));
+		console.println(tDoc.getField("Comp").valueAsString);
+		console.println("Template.extras.AScomp: " + What("Template.extras.AScomp"));
+
+
+	},
 
 }
 
@@ -229,4 +241,127 @@ CreatureList["bestial spirit air"] = {
 		name : "Flyby",
 		description : "The beast doesn't provoke opportunity attacks when it flies out of an enemy's reach."
 	}],
+}
+
+
+// Dysnomian
+CreatureList["testing-creature"] = {
+	name : "Testing Creature",
+	source : ["DYS", 1],
+	size : [4, 3],
+	type : ["Antsy", "Bezerk", "Callous"],
+	subtype : ["2nd level", "3rd level", "4th level"],
+	companion : "familiar",
+	companionApply : "companion",
+	alignment : "Unaligned",
+
+	ac : 11,
+	hp : 10,
+	hd : [3, 6],
+
+	speed : "30 ft, climb 30 ft",
+	proficiencyBonus : 1,
+	proficiencyBonusLinked : true,
+	challengeRating : "\"-\"",
+	scores : [15, 13, 12, 2, 13, 8],  /* [Str, Dex, Con, Int, Wis, Cha] */
+	senses : "Darkvision 60 ft",
+	attacksAction : 2,
+	attacks : [{
+		name : "Claws",
+		ability : 1,
+		damage : [2, 6, "slashing"],
+		range : "Melee (5 ft)",
+		description : "Two claws attacks as an Attack action"
+	}],
+	
+	features : [{
+		name : "False Appearance",
+		description : "While the purple crawler remains motionless, it is indistinguishable from an ordinary purple flower.",
+		joinString : "\n   "
+	}],
+	actions : [{
+		name : "Invisibility",
+		minlevel : 5,
+		description : "As an action, the purple crawler magically turns invisible until it attacks or casts a spell, or until its concentration ends (as if concentrating on a spell).",
+		addMod : [{ type : "skill", field : "all", mod : "max(oCha|1)", text : "The purple crawler adds its master's Charisma modifier (min 1) to all its skill checks." }]
+	}],
+	traits : [{
+		name : "Keen Sight",
+		minlevel : 8,
+		description : "The purple crawler has advantage on Wisdom (Perception) checks that rely on sight. It size increases to Large.",
+		eval : function(prefix, lvl) {
+			// Increase size to Large
+			PickDropdown(prefix + "Comp.Desc.Size", 2);
+		},
+		removeeval : function(prefix, lvl) {
+			// Change size back to Medium
+			PickDropdown(prefix + "Comp.Desc.Size", 3);
+		}
+	}],
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>> //
+// >>> Companion Page Only >>> //
+// >>>>>>>>>>>>>>>>>>>>>>>>>>> //
+	header : "Teeheehee",
+	calcChanges : {
+		hp : function (totalHD, HDobj, prefix) {
+			console.println("processing calcChanges - hp");
+		},
+		setAltHp : false,
+	},
+
+	eval : function(prefix, lvl) {
+		console.println("processing eval");
+
+		
+		var PrintObj = function(obj, objName) {
+			if (objName) console.println(objName + ":");
+			if (typeof obj === "string") {
+				console.println("\"" + obj + "\"");
+			} else {
+				for (var prop in obj) {
+					if (prop === "eval") continue;
+					console.println("(" + prop + ": " + obj[prop] + ")");
+				}
+			}
+		}
+
+		
+		var prefixes = What("Template.extras.AScomp").split(",").splice(1);
+		for (var prefixIndex = 0; prefixIndex < prefixes.length; prefixIndex++) {
+			// Prefixes look like "P4.AScomp."
+			var prefix = prefixes[prefixIndex];
+			if (!tDoc.getField(prefix + "Comp.Race")) continue; // Page doesn't exist
+					
+			// woah woah woah waht are we doing trying to find the prefix again?
+		}
+
+		var creaNameRaw = How(prefix + "Comp.Race"); // How() finds .submitName
+		var creaName = ParseCreature(creaNameRaw);
+		// we don't even need to find the creature name, the current companion is saved to a global var 
+		// Actually the creature is seperate to the companion so do need creature name
+
+		var objComp = CurrentCompRace[prefix];
+		PrintObj(objComp, "objComp");
+
+		var objCrea = CreatureList[creaName];
+		//PrintObj(objCrea, "objCrea");
+
+		// Damn, at this point, our our companion's size/type/subtype is still the array.
+
+		// try looking here for the creature type set on the sheet:
+		var inCompType = What(prefix + "Comp.Desc.MonsterType");
+		PrintObj(inCompType, "inCompType");
+		// Hell yeah let's go! inCompType: "Antsy (2nd level)"
+		
+		// time for regex
+
+		
+	},
+	removeeval : function(prefix, lvl) {
+		console.println("processing removeeval");
+	},
+	changeeval : function(prefix, lvl) {
+		console.println("processing changeeval");
+	},
 }

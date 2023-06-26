@@ -255,9 +255,9 @@ action : [
 	This object can contain almost all attributes of a CreatureList object.
 	See the "creature, wild shape option (CreatureList).js" file for all possible attributes.
 
-	When a companion template option is selected, the sheet will create a temporary CreatureList object
+	When a companion template option i the sheet will create a temporary CreatureList object
 	that has all the same attributes of the race's CreatureList object, but will amend it with the selected
-	companion template options, if any.
+	companion template options, if any.s selected,
 	The sheet will add any attribute of this `attributesAdd` object to the temporary CreatureList object.
 
 	Using the above example, any creature that has this companion template option selected,
