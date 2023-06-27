@@ -397,3 +397,118 @@ CreatureList["aberrant spirit star spawn"] = {
 		description : "At the start of each of the aberrations turns, each creature within 5ft must succeed on a wisdom saving throw against your spell DC or take 2d6 psychic damage, provided the aberration isn't incapacitated.",
 	}],
 }
+
+CreatureList["celestial spirit defender"] = {
+
+	name : "Celestial Spirit - Defender",
+	source : ["TCoE", 110],
+	size : 2,
+	type : "Celestial",
+	header : "Summon",
+	companion : ["summon"],
+	companionApply : "summon",
+	alignment : "Unaligned",
+
+	ac : 13,
+	hp : 40,
+	hd : [4, 8],
+	speed : "30 ft, fly 40ft",
+
+	proficiencyBonus : 0,
+	proficiencyBonusLinked : true,
+	challengeRating : "\"-\"",
+	scores : [16, 14, 16, 10, 14, 16],
+
+	senses : "Darkvision 60 ft",
+	languages : "Celestial, understands the languages you speak",
+	damage_immunities : "radiant",
+	condition_immunities : "charmed, frightened",
+
+	attacksAction : 2,
+	attacks : [{
+		name : "Radiant Mace",
+		ability : 1,
+		useSpellcastingAbility : true,
+		abilitytodamage : true,
+		damage : [1, 10, "radiant"],
+		modifiers : ["", 5],
+		range : "Melee (5 ft)",
+		description : "Itself or another creature within 10 ft of the target gain 1d10 temporary hit points.\nMultiattack: Radiant Mace a number of times equal to half the spell's level"
+	}],
+
+	features : [{
+		name : "Summon Celestial",
+		description : "You call forth a celestial spirit. It manifests in an angelic form in an unoccupied space that you can see within range. This corporeal form uses the Celestial Spirit stat block. When you cast the spell, choose Avenger or Defender. Your choice determines the creature’s attack in its stat block. ",
+		joinString : "\n   "
+	},{
+		name : "Higher Spell Level",
+		description : "The Celestial Spirit stat block gains 1 AC, 10 HP, and 1 point of damage on each attack for each spell level above fifth",
+		joinString : "\n   "
+	}],
+	actions : [{
+		name : "Multiattack",
+		description : "The celestial makes a number of attacks equal to half this spell's level (rounded down)",
+	}],
+	traits : [{
+		name : "Healing Touch (1/day)",
+		description : "The celestial touches another creature. The target magically regains hit points equal to 2d8 + the spell’s level.",
+	}],
+}
+
+CreatureList["celestial spirit avenger"] = {
+
+	name : "Celestial Spirit - Avenger",
+	source : ["TCoE", 110],
+	size : 2,
+	type : "Celestial",
+	header : "Summon",
+	companion : ["summon"],
+	companionApply : "summon",
+	alignment : "Unaligned",
+
+	ac : 11,
+	hp : 40,
+	hd : [4, 8],
+	speed : "30 ft, fly 40ft",
+
+	proficiencyBonus : 0,
+	proficiencyBonusLinked : true,
+	challengeRating : "\"-\"",
+	scores : [16, 14, 16, 10, 14, 16],
+
+	senses : "Darkvision 60 ft",
+	languages : "Celestial, understands the languages you speak",
+	damage_immunities : "radiant",
+	condition_immunities : "charmed, frightened",
+
+	attacksAction : 2,
+	attacks : [{
+		name : "Radiant Bow",
+		ability : 2,
+		useSpellcastingAbility : true,
+		abilitytodamage : true,
+		damage : [2, 6, "radiant"],
+		modifiers : ["", 5],
+		range : "Range 150/600ft",
+		description : "Multiattack: Radiant Bow a number of times equal to half the spell's level"
+	}],
+
+	features : [{
+		name : "Summon Celestial",
+		description : "You call forth a celestial spirit. It manifests in an angelic form in an unoccupied space that you can see within range. This corporeal form uses the Celestial Spirit stat block. When you cast the spell, choose Avenger or Defender. Your choice determines the creature’s attack in its stat block. ",
+		joinString : "\n   "
+	},{
+		name : "Higher Spell Level",
+		description : "The Celestial Spirit stat block gains 1 AC, 10 HP, and 1 point of damage on each attack for each spell level above fifth",
+		joinString : "\n   "
+	}],
+	actions : [{
+		name : "Multiattack",
+		description : "The celestial makes a number of attacks equal to half this spell's level (rounded down)",
+	}],
+	traits : [{
+		name : "Healing Touch (1/day)",
+		description : "The celestial touches another creature. The target magically regains hit points equal to 2d8 + the spell’s level.",
+	}],
+}
+
