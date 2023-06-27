@@ -108,6 +108,7 @@ CreatureList["bestial spirit land"] = {
 		useSpellcastingAbility : true,
 		abilitytodamage : true,
 		damage : [1, 8, "piercing"],
+		modifiers : ["", 2],
 		range : "Melee (5 ft)",
 		description : "Multiattack: Maul number of times equal to half the spell's level"
 	}],
@@ -158,6 +159,7 @@ CreatureList["bestial spirit water"] = {
 		ability : 1,
 		useSpellcastingAbility : true,
 		abilitytodamage : true,
+		modifiers : ["", 2],
 		damage : [1, 8, "piercing"],
 		range : "Melee (5 ft)",
 		description : "Multiattack: Maul number of times equal to half the spell's level"
@@ -212,6 +214,7 @@ CreatureList["bestial spirit air"] = {
 		useSpellcastingAbility : true,
 		abilitytodamage : true,
 		damage : [1, 8, "piercing"],
+		modifiers : ["", 2],
 		range : "Melee (5 ft)",
 		description : "Multiattack: Maul number of times equal to half the spell's level"
 	}],
@@ -228,5 +231,169 @@ CreatureList["bestial spirit air"] = {
 	traits : [{
 		name : "Flyby",
 		description : "The beast doesn't provoke opportunity attacks when it flies out of an enemy's reach."
+	}],
+}
+
+CreatureList["aberrant spirit beholderkin"] = {
+
+	name : "Aberrant Spirit - Beholderkin",
+	source : ["TCoE", 109],
+	size : 3,
+	type : "Aberration",
+	header : "Summon",
+	companion : ["summon"],
+	companionApply : "summon",
+	alignment : "Unaligned",
+
+	ac : 11,
+	hp : 40,
+	hd : [4, 8],
+	speed : "30 ft, fly 30 ft (hover)",
+
+	proficiencyBonus : 0,
+	proficiencyBonusLinked : true,
+	challengeRating : "\"-\"",
+	scores : [16, 10, 15, 16, 10, 6],
+
+	senses : "Darkvision 60 ft",
+	languages : "Deep Speech, understands the languages you speak",
+	damage_immunities : "psychic",
+
+	attacksAction : 2,
+	attacks : [{
+		name : "Eye Ray",
+		ability : 4,
+		useSpellcastingAbility : true,
+		abilitytodamage : true,
+		damage : [1, 8, "psychic"],
+		modifiers : ["", 4],
+		range : "Range 150 ft",
+		description : "Multiattack: Eye Ray number of times equal to half the spell's level"
+	}],
+
+	features : [{
+		name : "Summon Aberration",
+		description : "You call forth an aberrant spirit. It manifests in an unoccupied space that you can see within range. This corporeal form uses the Aberrant Spirit stat block. When you cast the spell, choose a Beholderkin, Slaad, or Star Spawn. The creature resembles an aberration of that kind, which determines certain traits in its stat block.",
+		joinString : "\n   "
+	},{
+		name : "Higher Spell Level",
+		description : "The Aberrant Spirit stat block gains 1 AC, 10 HP, and 1 point of damage on each attack for each spell level above forth",
+		joinString : "\n   "
+	}],
+	actions : [{
+		name : "Multiattack",
+		description : "The aberration makes a number of attacks equal to half this spell's level (rounded down)",
+	}],
+}
+
+CreatureList["aberrant spirit slaad"] = {
+
+	name : "Aberrant Spirit - Slaad",
+	source : ["TCoE", 109],
+	size : 3,
+	type : "Aberration",
+	header : "Summon",
+	companion : ["summon"],
+	companionApply : "summon",
+	alignment : "Unaligned",
+
+	ac : 11,
+	hp : 40,
+	hd : [4, 8],
+	speed : "30 ft",
+
+	proficiencyBonus : 0,
+	proficiencyBonusLinked : true,
+	challengeRating : "\"-\"",
+	scores : [16, 10, 15, 16, 10, 6],
+
+	senses : "Darkvision 60 ft",
+	languages : "Deep Speech, understands the languages you speak",
+	damage_immunities : "psychic",
+
+	attacksAction : 2,
+	attacks : [{
+		name : "Claws",
+		ability : 1,
+		useSpellcastingAbility : true,
+		abilitytodamage : true,
+		damage : [1, 10, "slashing"],
+		modifiers : ["", 4],
+		range : "Range 150 ft",
+		description : "If the target is a creature, it can't regain hit points untill the start of the aberrations next turn. \nMultiattack: Claws a number of times equal to half the spell's level"
+	}],
+
+	features : [{
+		name : "Summon Aberration",
+		description : "You call forth an aberrant spirit. It manifests in an unoccupied space that you can see within range. This corporeal form uses the Aberrant Spirit stat block. When you cast the spell, choose a Beholderkin, Slaad, or Star Spawn. The creature resembles an aberration of that kind, which determines certain traits in its stat block.",
+		joinString : "\n   "
+	},{
+		name : "Higher Spell Level",
+		description : "The Aberrant Spirit stat block gains 1 AC, 10 HP, and 1 point of damage on each attack for each spell level above forth",
+		joinString : "\n   "
+	}],
+	actions : [{
+		name : "Multiattack",
+		description : "The aberration makes a number of attacks equal to half this spell's level (rounded down)",
+	}],
+	traits : [{
+		name : "Regeneration",
+		description : "The aberration regains 5 hit points at the start of its turn if it has at least 1 hit point."
+	}],
+}
+
+CreatureList["aberrant spirit star spawn"] = {
+
+	name : "Aberrant Spirit - Star Spawn",
+	source : ["TCoE", 109],
+	size : 3,
+	type : "Aberration",
+	header : "Summon",
+	companion : ["summon"],
+	companionApply : "summon",
+	alignment : "Unaligned",
+
+	ac : 11,
+	hp : 40,
+	hd : [4, 8],
+	speed : "30 ft",
+
+	proficiencyBonus : 0,
+	proficiencyBonusLinked : true,
+	challengeRating : "\"-\"",
+	scores : [16, 10, 15, 16, 10, 6],
+
+	senses : "Darkvision 60 ft",
+	languages : "Deep Speech, understands the languages you speak",
+	damage_immunities : "psychic",
+
+	attacksAction : 2,
+	attacks : [{
+		name : "Psychic Slam",
+		ability : 4,
+		useSpellcastingAbility : true,
+		abilitytodamage : true,
+		damage : [1, 8, "psychic"],
+		modifiers : ["", 4],
+		range : "Melee (5 ft)",
+		description : "Multiattack: Psychic Slam a number of times equal to half the spell's level"
+	}],
+
+	features : [{
+		name : "Summon Aberration",
+		description : "You call forth an aberrant spirit. It manifests in an unoccupied space that you can see within range. This corporeal form uses the Aberrant Spirit stat block. When you cast the spell, choose a Beholderkin, Slaad, or Star Spawn. The creature resembles an aberration of that kind, which determines certain traits in its stat block.",
+		joinString : "\n   "
+	},{
+		name : "Higher Spell Level",
+		description : "The Aberrant Spirit stat block gains 1 AC, 10 HP, and 1 point of damage on each attack for each spell level above forth",
+		joinString : "\n   "
+	}],
+	actions : [{
+		name : "Multiattack",
+		description : "The aberration makes a number of attacks equal to half this spell's level (rounded down)",
+	}],
+	traits : [{
+		name : "Whispering Aura",
+		description : "At the start of each of the aberrations turns, each creature within 5ft must succeed on a wisdom saving throw against your spell DC or take 2d6 psychic damage, provided the aberration isn't incapacitated.",
 	}],
 }
