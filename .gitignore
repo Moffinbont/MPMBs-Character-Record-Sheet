@@ -48,3 +48,6 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Never upload the mpmb character sheet to internet
+*mpmb*.pdf
