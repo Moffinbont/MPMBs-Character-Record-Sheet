@@ -19,7 +19,21 @@ RequiredSheetVersion("13.1.7");
 				}
 			}
 		}
-	})(app.dysn.helper = app.dysn.helper || {});	
+	})(app.dysn.helper = app.dysn.helper || {});
+	
+
+	app.dysn.helper.GetDisplaySpeed = function (prefix, speed) {
+		console.println(speed);
+		var displaySpeed = What("Unit System") === "imperial" ? speed : ConvertToMetric(speed, 0.5);
+		if (typePF) { // this is a global var that is true when the sheet is the printer friendly one
+			// add line breaks for the printer friendly sheets - replacing , or ;
+			displaySpeed = displaySpeed.replace(/(,|;) /g, "$1\n");
+		}
+		console.println(displaySpeed);
+
+		return displaySpeed;
+	};
+
 })(app.dysn = app.dysn || {});
 
 
@@ -84,7 +98,7 @@ RequiredSheetVersion("13.1.7");
 			// }
 			if (summonInfo.displaySpeed) Value(prefix + "Comp.Use.Speed", summonInfo.displaySpeed);
 			if (summonInfo.age) Value(prefix + "Comp.Desc.Age", summonInfo.age);
-			if (summonInfo.gender) Value(prefix + "Comp.Desc.Age", summonInfo.gender);		
+			if (summonInfo.gender) Value(prefix + "Comp.Desc.Gender", summonInfo.gender);		
 			if (summonInfo.hp) Value(prefix + "Comp.Use.HP.Max", summonInfo.hp);
 			if (summonInfo.sl) Value(prefix + "Comp.Use.HD.Level", summonInfo.sl);
 			if (summonInfo.ac) Value(prefix + "Comp.Use.AC", summonInfo.ac);
@@ -92,19 +106,98 @@ RequiredSheetVersion("13.1.7");
 		};
 
 
-		app.dysn.summon.GetDisplaySpeed = function (prefix, speed) {
-			console.println(speed);
-			var displaySpeed = What("Unit System") === "imperial" ? speed : ConvertToMetric(speed, 0.5);
-			if (typePF) { // this is a global var that is true when the sheet is the printer friendly one
-				// add line breaks for the printer friendly sheets
-				displaySpeed = displaySpeed.replace(/(,|;) /g, "$1\n");
+		app.dysn.summon.EvalCreature = function (prefix) {
+			console.println("processing eval");
+
+			// what is remembered currently? - "summon", it comes from the creature.companionApply, and is required for reloading? Maybe? TODO test changing this
+			//console.println("Remembered Type: " + What(prefix + "Comp.Type"));
+
+			// try looking here for the creature type set on the sheet, as chosen by the user
+			var inCompType = What(prefix + "Comp.Desc.MonsterType");
+			
+			// find a digit, then either "st", "nd", "rd", or "th", then 0 or 1 whitespace chars, then "level", the i means case insensitive
+			var matchesSpellSlot = /\d(st|nd|rd|th)\s?level/i.exec(inCompType);
+			//app.dysn.helper.PrintObj(matchesSpellSlot, "matchesSpellSlot");
+
+			
+			var sSpellSlot = (matchesSpellSlot && matchesSpellSlot.length) > 0 ? matchesSpellSlot[0] : "";
+			app.dysn.helper.PrintObj(sSpellSlot, "sSpellSlot");
+
+			var sl = sSpellSlot.length > 0 ? +sSpellSlot[0] : -1;
+			console.println("sl+" + sl);
+			//app.dysn.helper.PrintObj(sl, "sl");
+
+			var objComp = CurrentCompRace[prefix];
+			//dysn.helper.PrintObj(objComp, "objComp");
+
+			var creaNameRaw = How(prefix + "Comp.Race"); // How() finds .submitName
+			var creaName = ParseCreature(creaNameRaw);
+			// --we don't even need to find the creature name, the current companion is saved to a global var 
+			// Actually the creature is seperate to the companion so do need creature name
+
+			// Do we edit the creature object? Or do we have to edit the sheet fields directly?
+			var objCrea = CreatureList[creaName];
+			//dysn.helper.PrintObj(objCrea, "objCrea");
+
+			var su = objCrea.summonData; // Our custom property
+			app.dysn.helper.PrintObj(su, "summonData");
+
+			var speed;
+			var gender;
+			var baseHp;
+			var monsterType;
+
+			var foundFlavour = false;
+			for (var prop in su.flavours) {
+				if (!Object.prototype.hasOwnProperty.call(su.flavours, prop)) {
+					continue;
+				}
+				//app.dysn.helper.PrintObj(prop, "prop");
+				var flavour = su.flavours[prop];
+				//app.dysn.helper.PrintObj(flavour, "flavour");
+
+				if (flavour.regex.test(inCompType)) {
+					console.println("processing " + flavour.name);
+					gender = flavour.name;
+					speed = flavour.speed ? flavour.speed : su.speed;
+					baseHp = flavour.baseHp ? flavour.baseHp : su.baseHp;
+					monsterType = flavour.monsterType ? flavour.monsterType : su.monsterType;
+					foundFlavour = true;
+					break;
+				}
 			}
-			console.println(displaySpeed);
+
+			if (!foundFlavour) {
+				monsterType = su.defaultMonsterType;
+			}
+			
+			// if these are null or undefined, we won't update the field on the sheet
+			var displaySpeed = app.dysn.helper.GetDisplaySpeed(prefix, speed);
+			
+			
+			var aPerA = (sl !== -1 && su.multiAttackPerSl) ?
+				Math.floor(sl * su.multiAttackPerSl) :
+				null;
+
+			var hp = (sl !== -1 && su.hpPerAdditionalSl && su.lowestSl) ? 
+				baseHp + (su.hpPerAdditionalSl * (sl - su.lowestSl)) :
+				null;
+		
+			var ac = (sl !== -1 && su.acPerSl) ?
+				su.baseAc + (sl * su.acPerSl) :
+				null;
 
 			var summonInfo = {
 				displaySpeed: displaySpeed,
+				monsterType: monsterType,
+				hp: hp,
+				ac: ac,
+				aPerA: aPerA,
+				age: sSpellSlot,
+				gender: gender,
 			}
-			return summonInfo;
+
+			app.dysn.summon.UpdateFormFields(prefix, summonInfo);
 		};
 		
 	})(app.dysn.summon = app.dysn.summon || {});
@@ -203,108 +296,13 @@ RequiredSheetVersion("13.1.7");
 			}],
 			
 			eval: function(prefix, lvl) {
-				console.println("processing eval");
-
-				// what is remembered currently? - "summon", it comes from the creature.companionApply, and is required for reloading? Maybe? TODO test changing this
-				//console.println("Remembered Type: " + What(prefix + "Comp.Type"));
-
-				// try looking here for the creature type set on the sheet, as chosen by the user
-				var inCompType = What(prefix + "Comp.Desc.MonsterType");
-				
-				// find a digit, then either "st", "nd", "rd", or "th", then 0 or 1 whitespace chars, then "level", the i means case insensitive
-				var matchesSpellSlot = /\d(st|nd|rd|th)\s?level/i.exec(inCompType);
-				//app.dysn.helper.PrintObj(matchesSpellSlot, "matchesSpellSlot");
-
-				
-				var strSpellSlot = (matchesSpellSlot && matchesSpellSlot.length) > 0 ? matchesSpellSlot[0] : "";
-				app.dysn.helper.PrintObj(strSpellSlot, "strSpellSlot");
-
-				var sl = strSpellSlot.length > 0 ? +strSpellSlot[0] : -1;
-				console.println("sl+" + sl);
-				//app.dysn.helper.PrintObj(sl, "sl");
-
-				var objComp = CurrentCompRace[prefix];
-				//dysn.helper.PrintObj(objComp, "objComp");
-
-				var creaNameRaw = How(prefix + "Comp.Race"); // How() finds .submitName
-				var creaName = ParseCreature(creaNameRaw);
-				// --we don't even need to find the creature name, the current companion is saved to a global var 
-				// Actually the creature is seperate to the companion so do need creature name
-
-				// Do we edit the creature object? Or do we have to edit the sheet fields directly?
-				var objCrea = CreatureList[creaName];
-				//dysn.helper.PrintObj(objComp, "objComp");
-
-				var su = objCrea.summonData; // Our custom property
-				app.dysn.helper.PrintObj(su, "summonData");
-
-				var speed;
-				var gender;
-				var baseHp;
-				var monsterType;
-
-				var foundFlavour = false;
-				for (var prop in su.flavours) {
-					if (!Object.prototype.hasOwnProperty.call(su.flavours, prop)) {
-						continue;
-					}
-					//app.dysn.helper.PrintObj(prop, "prop");
-					var flavour = su.flavours[prop];
-					//app.dysn.helper.PrintObj(flavour, "flavour");
-
-					if (flavour.regex.test(inCompType)) {
-						console.println("processing " + flavour.name);
-						gender = flavour.name;
-						speed = flavour.speed ? flavour.speed : su.speed;
-						baseHp = flavour.baseHp ? flavour.baseHp : su.baseHp;
-						monsterType = flavour.monsterType ? flavour.monsterType : su.monsterType;
-						foundFlavour = true;
-						break;
-					}
-				}
-				
-				if (foundFlavour && sl !== -1) {					
-					var displaySpeed = app.dysn.summon.GetDisplaySpeed(prefix, speed);
-									var hp;
-					var ac;
-					var aPerA = sl / 2; // one attack for every two spell slot levels (round down).
-
-					if (su.hpPerAdditionalSl && sl > su.lowestSl) {
-						// +5 hp for each sl above 2
-						hp = baseHp + (su.hpPerAdditionalSl * (sl - su.lowestSl));
-					} else {
-						hp = baseHp;
-					}
-					
-					if (su.acPerSl) {
-						ac = su.baseAc + (sl * su.acPerSl);
-					} else {
-						ac = au.baseAc;
-					}
-					
-
-					var summonInfo = {
-						displaySpeed: displaySpeed,
-						monsterType: monsterType,
-						hp: hp,
-						ac: ac,
-						aPerA: aPerA,
-						age: strSpellSlot,
-						gender: gender,
-					}
-
-					app.dysn.summon.UpdateFormFields(prefix, summonInfo)
-				} else {
-					Value(prefix + "Comp.Desc.MonsterType", su.defaultMonsterType);
-				}
-				
+				app.dysn.summon.EvalCreature(prefix);				
 			},
 			removeeval : function(prefix, lvl) {
 				Value(prefix + "Comp.Desc.Age", "");
 				Value(prefix + "Comp.Desc.Gender", "");
 			},
 			summonData: dysn.summon.data.beast,
-
 		};
 	})(app.dysn.summon = app.dysn.summon || {});
 })(app.dysn = app.dysn || {});
