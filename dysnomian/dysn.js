@@ -5,7 +5,6 @@ RequiredSheetVersion("13.1.7");
 (function (dysn) {
 	(function (helper) {
 		app.dysn.helper.PrintObj = function(obj, objName) {
-			
 			if (typeof obj === "string") {
 				console.println(objName + ": \"" + obj + "\"");
 			} else {
@@ -14,7 +13,7 @@ RequiredSheetVersion("13.1.7");
 					if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
 						continue;
 					}
-					if (prop === "eval" && obj["eval"]) { console.println("(eval: ...)"); }
+					if (typeof obj[prop] === "function" && ("" + obj[prop]).length > 200 ) { console.println("(" + prop + ": function ...)"); }
 					else { console.println("(" + prop + ": " + obj[prop] + ")"); }
 				}
 			}
@@ -22,17 +21,60 @@ RequiredSheetVersion("13.1.7");
 	})(app.dysn.helper = app.dysn.helper || {});
 	
 
-	app.dysn.helper.GetDisplaySpeed = function (prefix, speed) {
-		console.println(speed);
-		var displaySpeed = What("Unit System") === "imperial" ? speed : ConvertToMetric(speed, 0.5);
-		if (typePF) { // this is a global var that is true when the sheet is the printer friendly one
+	app.dysn.helper.GetDisplaySpeed = function (speed) {
+		//console.println(speed);
+		var displaySpeed = What("Unit System") === "metric" ? ConvertToMetric(speed, 0.5) : speed ;
+		if (typePF && displaySpeed) { // this is a global var that is true when the sheet is the printer friendly one
 			// add line breaks for the printer friendly sheets - replacing , or ;
 			displaySpeed = displaySpeed.replace(/(,|;) /g, "$1\n");
 		}
-		console.println(displaySpeed);
+		//console.println(displaySpeed);
 
 		return displaySpeed;
 	};
+
+
+	app.dysn.helper.ToOrdinal = function (inNum) {
+		var num = +inNum;
+		if (num < 0) {
+			num = -num;
+		}		
+		var remainderTen = num % 10;
+		var remainderHundred = num % 100;
+		var suffix;
+		if (remainderTen === 1 && remainderHundred !== 11) {
+			suffix = "st";
+		} else if (remainderTen === 2 && remainderHundred !== 12) {
+			suffix = "nd";
+		} else if (remainderTen === 3 && remainderHundred !== 13) {
+			suffix = "rd";
+		} else {
+			suffix = "th";
+		}		
+		return "" + inNum + suffix;
+	}
+
+
+	app.dysn.helper.BuildArrayOfOrdinals = function (minNum, maxNum, sEach, extraElements) {
+		if (minNum > maxNum) {
+			var temp = minNum;
+			minNum = maxNum;
+			maxNum = temp;
+		}
+		var arr = [];
+		for (var curNum = minNum; curNum <= maxNum; curNum++) {
+			var curOrdinal = app.dysn.helper.ToOrdinal(curNum);
+			var curValue = sEach ? sEach.replace("{0}", curOrdinal) : curOrdinal;
+			arr.push(curValue)
+		}
+
+		if (extraElements && extraElements.length > 0) {
+			arr = arr.concat(extraElements);
+		}
+
+		app.dysn.helper.PrintObj(arr, "arr");
+		return arr;
+	}
 
 })(app.dysn = app.dysn || {});
 
@@ -41,6 +83,7 @@ RequiredSheetVersion("13.1.7");
 	(function (summon) {
 		app.dysn.summon.data = {
 			beast: {
+				name: "Bestial Spirit",
 				lowestSl: 2,
 				baseAc: 11,
 				acPerSl: 1,
@@ -90,19 +133,19 @@ RequiredSheetVersion("13.1.7");
 
 		app.dysn.summon.UpdateFormFields = function (prefix, summonInfo) {
 			// set creature type on the form directly - see functions2.js:498 for example of setting companion fields
-			Value(prefix + "Comp.Desc.MonsterType", summonInfo.monsterType);
-			// try {
-			// 	Value(prefix + "Comp.Race", summonInfo.race);
-			// } catch (err) {
-			// 	// do nothing, I'm not sure why the above line throws, maybe because the value we're setting the race to isn't in the dropdown list? But it still works so idk
-			// }
+			if (summonInfo.monsterType) { Value(prefix + "Comp.Desc.MonsterType", summonInfo.monsterType) } else { console.println("Warning! No monster type to set!"); };
 			if (summonInfo.displaySpeed) Value(prefix + "Comp.Use.Speed", summonInfo.displaySpeed);
 			if (summonInfo.age) Value(prefix + "Comp.Desc.Age", summonInfo.age);
-			if (summonInfo.gender) Value(prefix + "Comp.Desc.Gender", summonInfo.gender);		
+			if (summonInfo.gender) Value(prefix + "Comp.Desc.Sex", summonInfo.gender);		
 			if (summonInfo.hp) Value(prefix + "Comp.Use.HP.Max", summonInfo.hp);
 			if (summonInfo.sl) Value(prefix + "Comp.Use.HD.Level", summonInfo.sl);
 			if (summonInfo.ac) Value(prefix + "Comp.Use.AC", summonInfo.ac);
 			if (summonInfo.aPerA) Value(prefix + "Comp.Use.Attack.perAction", summonInfo.aPerA);
+			if (summonInfo.sTraits) {
+				// overwrite any previous traits with our traits
+				Value(prefix + "Comp.Use.Traits", summonInfo.sTraits);
+				// TODO maybe we should only replace default traits, so other parts of the automation could modify the traits?
+			}
 		};
 
 
@@ -128,7 +171,7 @@ RequiredSheetVersion("13.1.7");
 			//app.dysn.helper.PrintObj(sl, "sl");
 
 			var objComp = CurrentCompRace[prefix];
-			//dysn.helper.PrintObj(objComp, "objComp");
+			//app.dysn.helper.PrintObj(objComp, "objComp");
 
 			var creaNameRaw = How(prefix + "Comp.Race"); // How() finds .submitName
 			var creaName = ParseCreature(creaNameRaw);
@@ -137,15 +180,17 @@ RequiredSheetVersion("13.1.7");
 
 			// Do we edit the creature object? Or do we have to edit the sheet fields directly?
 			var objCrea = CreatureList[creaName];
-			//dysn.helper.PrintObj(objCrea, "objCrea");
+			//app.dysn.helper.PrintObj(objCrea, "objCrea");
 
 			var su = objCrea.summonData; // Our custom property
-			app.dysn.helper.PrintObj(su, "summonData");
+			//app.dysn.helper.PrintObj(su, "summonData");
 
-			var speed;
-			var gender;
-			var baseHp;
 			var monsterType;
+			var speed = null;
+			var gender = null;
+			var baseHp = null;
+			var allTraits = [];
+			if (su.traits) { allTraits = allTraits.concat(su.traits); }
 
 			var foundFlavour = false;
 			for (var prop in su.flavours) {
@@ -157,24 +202,40 @@ RequiredSheetVersion("13.1.7");
 				//app.dysn.helper.PrintObj(flavour, "flavour");
 
 				if (flavour.regex.test(inCompType)) {
-					console.println("processing " + flavour.name);
+					foundFlavour = true;
+					monsterType = flavour.monsterType ? flavour.monsterType : su.monsterType;
+					console.println("processing flavour: " + flavour.name + " for " + su.name);
 					gender = flavour.name;
 					speed = flavour.speed ? flavour.speed : su.speed;
 					baseHp = flavour.baseHp ? flavour.baseHp : su.baseHp;
-					monsterType = flavour.monsterType ? flavour.monsterType : su.monsterType;
-					foundFlavour = true;
+					if (flavour.traits && flavour.traits.length > 0) {
+						app.dysn.helper.PrintObj(flavour.traits[0], "flavour.traits[0]");
+
+						allTraits = allTraits.concat(flavour.traits);
+					}
 					break;
 				}
 			}
-
+			
+			var sTraits = null;
 			if (!foundFlavour) {
 				monsterType = su.defaultMonsterType;
+			} else {
+				// only override traits if we found a flavour - otherwise don't set traits
+				sTraits = "";
+				for (var traitIndex = 0; traitIndex < allTraits.length; traitIndex++) {
+					trait = allTraits[traitIndex];
+					if (trait) {
+						if (sTraits.length > 0) { sTraits += "\r\n"; }
+						sTraits += "\u25C6 " + trait.name + (trait.joinString !== undefined ? trait.joinString : ": ") + trait.description;					
+					}
+				}
 			}
 			
+			var displaySpeed = app.dysn.helper.GetDisplaySpeed(speed);
+			
+			
 			// if these are null or undefined, we won't update the field on the sheet
-			var displaySpeed = app.dysn.helper.GetDisplaySpeed(prefix, speed);
-			
-			
 			var aPerA = (sl !== -1 && su.multiAttackPerSl) ?
 				Math.floor(sl * su.multiAttackPerSl) :
 				null;
@@ -187,6 +248,9 @@ RequiredSheetVersion("13.1.7");
 				su.baseAc + (sl * su.acPerSl) :
 				null;
 
+			
+			//app.dysn.helper.PrintObj(sTraits, "sTraits");
+
 			var summonInfo = {
 				displaySpeed: displaySpeed,
 				monsterType: monsterType,
@@ -195,6 +259,7 @@ RequiredSheetVersion("13.1.7");
 				aPerA: aPerA,
 				age: sSpellSlot,
 				gender: gender,
+				sTraits: sTraits,
 			}
 
 			app.dysn.summon.UpdateFormFields(prefix, summonInfo);
@@ -215,27 +280,32 @@ RequiredSheetVersion("13.1.7");
 			source: ["TCoE", 109],	
 			notes: [{
 				name: "",
+				description: "The summoned creature is an ally to you and your companions.\r\n   The creature disappears when it drops to 0 hit points or when the spell ends.",
+				joinString: ""
+			}, {
+				name: "",
 				description: "In combat, the creature shares your initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action " +
 					"required by you). If you don’t issue any, it takes the Dodge action and uses its move to avoid danger.",
 				joinString: ""
 			}],	
-			attributesAdd: {
-				features: [{
-					name: "Summon Spell",
-					description: "The creature is an ally to you and your companions.\r\n   The creature disappears when it drops to 0 hit points or when the spell ends."
-				}]
-			},	
+			// attributesAdd: {
+			// 	features: [{
+			// 		name: "Summon Spell",
+			// 		description: "The creature is an ally to you and your companions.\r\n   The creature disappears when it drops to 0 hit points or when the spell ends."
+			// 	}]
+			// },
 			attributesChange: function(sCrea, objCrea) {
 				var prefixes = What("Template.extras.AScomp").split(",").splice(1);
 				for (var prefixIndex = 0; prefixIndex < prefixes.length; prefixIndex++) {
 					// Prefixes look like "P4.AScomp."
 					var prefix = prefixes[prefixIndex];
-					if (!tDoc.getField(prefix + "Comp.Race")) continue; // Page doesn't exist
+					if (!tDoc.getField(prefix + "Comp.Race")) continue; // Companion page doesn't exist
 		
 					var inCompType = What(prefix + "Comp.Desc.MonsterType");
-					app.dysn.helper.PrintObj(inCompType, "inCompType");
+					//app.dysn.helper.PrintObj(inCompType, "inCompType");
+					
 					// This finds the old text that was here - gets overwritten later during the companion load process
-				}			
+				}		
 			},	
 		}
 	})(app.dysn.summon = app.dysn.summon || {});
@@ -248,8 +318,8 @@ RequiredSheetVersion("13.1.7");
 			name: "Bestial Spirit",
 			source: ["TCoE", 109],
 			size: 4,
-			type: ["All", "Land", "Water", "Air"],
-			subtype: ["2nd level spell slot", "3rd level spell slot", "4th level spell slot", "5th level spell slot"],
+			type: ["Land", "Water", "Air", "All"],
+			subtype: app.dysn.helper.BuildArrayOfOrdinals(2, 9, "{0} level spell slot", ["All"]),
 			header: "Summon",
 			companion: "summon-tashas",
 			companionApply: "summon-tashas",
@@ -296,13 +366,13 @@ RequiredSheetVersion("13.1.7");
 			}],
 			
 			eval: function(prefix, lvl) {
-				app.dysn.summon.EvalCreature(prefix);				
+				app.dysn.summon.EvalCreature(prefix);
 			},
 			removeeval : function(prefix, lvl) {
 				Value(prefix + "Comp.Desc.Age", "");
-				Value(prefix + "Comp.Desc.Gender", "");
+				Value(prefix + "Comp.Desc.Sex", "");
 			},
-			summonData: dysn.summon.data.beast,
+			summonData: app.dysn.summon.data.beast,
 		};
 	})(app.dysn.summon = app.dysn.summon || {});
 })(app.dysn = app.dysn || {});
