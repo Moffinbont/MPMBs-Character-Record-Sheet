@@ -152,7 +152,7 @@ RequiredSheetVersion("13.1.7");
 		app.dysn.summon.EvalCreature = function (prefix) {
 			console.println("processing eval");
 
-			// what is remembered currently? - "summon", it comes from the creature.companionApply, and is required for reloading? Maybe? TODO test changing this
+			// what is remembered currently? this prints "summon", it comes from the creature.companionApply, and is required for reloading? Maybe? TODO test changing this
 			//console.println("Remembered Type: " + What(prefix + "Comp.Type"));
 
 			// try looking here for the creature type set on the sheet, as chosen by the user
@@ -175,7 +175,7 @@ RequiredSheetVersion("13.1.7");
 
 			var creaNameRaw = How(prefix + "Comp.Race"); // How() finds .submitName
 			var creaName = ParseCreature(creaNameRaw);
-			// --we don't even need to find the creature name, the current companion is saved to a global var 
+			// --do we even need to find the creature name? the current companion is saved to a global var 
 			// Actually the creature is seperate to the companion so do need creature name
 
 			// Do we edit the creature object? Or do we have to edit the sheet fields directly?
@@ -248,9 +248,6 @@ RequiredSheetVersion("13.1.7");
 				su.baseAc + (sl * su.acPerSl) :
 				null;
 
-			
-			//app.dysn.helper.PrintObj(sTraits, "sTraits");
-
 			var summonInfo = {
 				displaySpeed: displaySpeed,
 				monsterType: monsterType,
@@ -276,8 +273,8 @@ RequiredSheetVersion("13.1.7");
 			name: "Tasha's Summon",
 			nameMenu: "Summon Tasha's",
 			nameTooltip: "the summon spells in Tasha's Cauldron of Everything ",
-			nameOrigin: "a TCoE Summon Spell",	
-			source: ["TCoE", 109],	
+			nameOrigin: "a TCoE Summon Spell",
+			source: ["TCoE", 109],
 			notes: [{
 				name: "",
 				description: "The summoned creature is an ally to you and your companions.\r\n   The creature disappears when it drops to 0 hit points or when the spell ends.",
@@ -287,26 +284,7 @@ RequiredSheetVersion("13.1.7");
 				description: "In combat, the creature shares your initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action " +
 					"required by you). If you don’t issue any, it takes the Dodge action and uses its move to avoid danger.",
 				joinString: ""
-			}],	
-			// attributesAdd: {
-			// 	features: [{
-			// 		name: "Summon Spell",
-			// 		description: "The creature is an ally to you and your companions.\r\n   The creature disappears when it drops to 0 hit points or when the spell ends."
-			// 	}]
-			// },
-			attributesChange: function(sCrea, objCrea) {
-				var prefixes = What("Template.extras.AScomp").split(",").splice(1);
-				for (var prefixIndex = 0; prefixIndex < prefixes.length; prefixIndex++) {
-					// Prefixes look like "P4.AScomp."
-					var prefix = prefixes[prefixIndex];
-					if (!tDoc.getField(prefix + "Comp.Race")) continue; // Companion page doesn't exist
-		
-					var inCompType = What(prefix + "Comp.Desc.MonsterType");
-					//app.dysn.helper.PrintObj(inCompType, "inCompType");
-					
-					// This finds the old text that was here - gets overwritten later during the companion load process
-				}		
-			},	
+			}],
 		}
 	})(app.dysn.summon = app.dysn.summon || {});
 })(app.dysn = app.dysn || {});

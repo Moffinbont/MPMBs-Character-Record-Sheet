@@ -3,6 +3,40 @@ var iFileName = "dysn-creatures.js";
 
 RequiredSheetVersion("13.1.7");
 
+
+// Companion List
+CompanionList["summon-tashas"] = {
+	name: "Tasha's Summon",
+	nameMenu: "Summon Tasha's",
+	nameTooltip: "the summon spells in Tasha's Cauldron of Everything ",
+	nameOrigin: "a TCoE Summon Spell",	
+	source: ["TCoE", 109],	
+	notes: [{
+		name: "",
+		description: "In combat, the creature shares your initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action " +
+			"required by you). If you don’t issue any, it takes the Dodge action and uses its move to avoid danger.",
+		joinString: ""
+	}],	
+	attributesAdd: {
+		features: [{
+			name: "Summon Spell",
+			description: "The creature is an ally to you and your companions.\r\n   The creature disappears when it drops to 0 hit points or when the spell ends."
+		}]
+	},
+	attributesChange: function(sCrea, objCrea) {
+		var prefixes = What("Template.extras.AScomp").split(",").splice(1);
+		for (var prefixIndex = 0; prefixIndex < prefixes.length; prefixIndex++) {
+			// Prefixes look like "P4.AScomp."
+			var prefix = prefixes[prefixIndex];
+			if (!tDoc.getField(prefix + "Comp.Race")) continue; // Companion page doesn't exist
+
+			var inCompType = What(prefix + "Comp.Desc.MonsterType");
+			//app.dysn.helper.PrintObj(inCompType, "inCompType");
+			
+			// This finds the old text that was here - gets overwritten later during the companion load process
+		}		
+	},
+}
 CreatureList["testing-creature"] = {
 	name : "Testing Creature",
 	source : ["DYS", 1],
